@@ -1,0 +1,6 @@
+dataset/
+dataset_fixed/
+__pycache__/
+.env
+citation_db.sqlite
+*.pyc
