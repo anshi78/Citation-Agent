@@ -134,7 +134,9 @@ Do not include any markdown formatting around the JSON (e.g., no ```json ```).
                 
                 if done:
                     # Once a submit action completes, final score replaces reward iteration
-                    score = float(reward.value) 
+                    # Clamp to strictly between 0 and 1 (validator requirement)
+                    raw_score = float(reward.value)
+                    score = max(0.01, min(0.99, raw_score))
                 
                 rewards.append(step_reward)
                 messages.append({"role": "assistant", "content": action_text})
@@ -150,13 +152,14 @@ Do not include any markdown formatting around the JSON (e.g., no ```json ```).
                 done = True
                 rewards.append(0.0)
                 steps += 1
+                score = 0.01  # Clamp failure score to > 0
                 safe_action_log = action_text.replace('\r', '').replace('\n', ' ') if action_text else "None"
                 log_step(step=steps, action=safe_action_log, reward=0.0, done=True, error=error_msg)
                 print(f"[DEBUG] Error during inference on task {task_id}: {type(e).__name__}: {e}", flush=True)
                 print(f"[DEBUG] Full traceback:\n{traceback.format_exc()}", flush=True)
                 break
                 
-        success = (score > 0)
+        success = (score > 0.5)
         
     finally:
         log_end(success=success, steps=steps, score=score, rewards=rewards)
