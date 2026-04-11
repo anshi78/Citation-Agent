@@ -29,6 +29,8 @@ FILES_TO_UPLOAD = [
     "Dockerfile",
     "openenv.yaml",
     "requirements.txt",
+    "pyproject.toml",
+    "uv.lock",
     "README.md",
     ".gitattributes",
     ".dockerignore",

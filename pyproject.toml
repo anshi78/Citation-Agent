@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "citation-agent"
@@ -9,19 +9,24 @@ description = "OpenEnv environment for academic citation verification and litera
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "openenv-core[core] @ git+https://github.com/meta-pytorch/OpenEnv.git@v0.2.3",
     "pydantic>=2.0.0",
     "openai>=1.0.0",
     "httpx>=0.24.0",
-    "requests",
+    "requests>=2.31.0",
     "huggingface-hub",
     "python-dotenv",
-    "fastapi>=0.104.0",
+    "fastapi>=0.115.0",
     "uvicorn>=0.24.0",
-    "openenv-core>=0.2.0",
 ]
 
-[project.scripts]
-citation-agent-server = "server.app:main"
-
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest>=8.0.0"]
+
+[project.scripts]
+# Server entry point - enables running via: uv run --project . server
+server = "server.app:main"
+
+[tool.setuptools]
+include-package-data = true
+packages = ["server"]
