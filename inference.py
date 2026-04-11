@@ -36,16 +36,18 @@ def run_inference(task_id):
         return val.strip().strip('"').strip("'")
 
     # Read credentials from environment variables per spec
-    api_key    = _clean(os.environ.get("HF_TOKEN", "mock_key"))
+    # HF_TOKEN has NO default (spec requirement)
+    api_key    = os.environ.get("HF_TOKEN")
     base_url   = _clean(os.environ.get("API_BASE_URL", "https://router.huggingface.co/v1"))
     model_name = _clean(os.environ.get("MODEL_NAME", "llama-3.3-70b-versatile"))
     print(f"[DEBUG] base_url={base_url} model={model_name}", flush=True)
 
-    if api_key == "mock_key":
+    if not api_key:
         print("Warning: HF_TOKEN not provided, returning 0")
         log_start(task=task_id, env=BENCHMARK, model=model_name)
         log_end(success=False, steps=0, score=0.0, rewards=[])
         return 0.0
+    api_key = _clean(api_key)
 
     # Use explicit timeout to avoid hanging connections
     http_client = httpx.Client(timeout=httpx.Timeout(60.0, connect=15.0))
